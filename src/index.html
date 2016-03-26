@@ -1,0 +1,81 @@
+<%
+
+var fromAP = json.results;
+var statewide = {};
+var counties = {};
+fromAP.forEach(function(row) {
+  if (row.statepostal != "WA") return;
+  row.votepct = Math.round(row.votepct * 1000) / 10;
+  if (row.level == "state") {
+    statewide[row.last] = row;
+  } else if (row.level == "county") {
+    var county = row.reportingunitname;
+    if (!counties[county]) counties[county] = {};
+    var c = counties[county];
+    c[row.last] = row;
+  }
+});
+
+var now = new Date();
+var hours = now.getHours();
+var amPm = hours >= 12 ? "PM" : "AM";
+if (hours > 12) hours -= 12;
+var minutes = now.getMinutes();
+if (minutes < 10) minutes = "0" + minutes;
+var date = `${hours}:${minutes} ${amPm}`;
+
+%><!doctype html>
+<html>
+  <head>
+    <title><%= json.project.title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <%= t.include("partials/_head.html") %>
+  </head>
+  <body>
+
+    <responsive-child>
+      <main class="results">
+        <div class="map-container">
+          <div class="aspect-inner">
+            <%= t.include("assets/countyMap.svg") %>
+          </div>
+        </div>
+        <div class="results-container">
+          <div class="statewide">
+            <h2>Statewide</h2>
+            <div class="reporting">Precincts reporting: <%= statewide.Clinton.precinctsreportingpct %>%</div>
+            <ul class="candidates">
+              <li> <span class="name">Clinton</span>: <span class="result"><%= statewide.Clinton.votepct %>%</span>
+              <li> <span class="name">Sanders</span>: <span class="result"><%= statewide.Sanders.votepct %>%</span>
+            </ul>
+          </div>
+
+          <div class="countywide unchosen">
+            Choose a county from the map for detailed results
+          </div>
+
+          <div class="updated">
+            <div class="time">
+              Updated: <%= date %>
+            </div>
+            <div class="credit">
+              THOMAS WILBURN / THE SEATTLE TIMES
+            </div>
+          </div>
+        </div>
+      </main>
+    </responsive-child>
+    
+    <script>
+window.countyData = <%= JSON.stringify(counties) %>;
+    </script>
+
+    <script src="app.js" async></script>
+    <% if (json.project.production) { %>
+    <%= !json.project.embedded ? t.include("partials/_foot.html") : "" %>
+    <%= t.include("partials/_workHere.html") %>
+    <% } %>
+  </body>
+</html>

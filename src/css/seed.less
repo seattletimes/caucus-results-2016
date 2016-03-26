@@ -1,0 +1,92 @@
+@import "seattletimes";
+
+main.results {
+  max-width: 960px;
+  margin: auto;
+  font-family: @df-sans;
+  font-size: 15px;
+  
+  .display-flex();
+  @media @mobile {
+    display: block;
+  }
+  
+  .map-container {
+    position: relative;
+    .flex(2);
+  }
+  
+  .results-container {
+    .flex(1);
+    
+    @media @mobile {
+      .display-flex();
+      
+      & > div {
+        .flex(1);
+        padding: 8px;
+      }
+    }
+  }
+}
+
+.map-container {
+  position: relative;
+  
+  .aspect-inner {
+    padding-bottom: percentage(648 / 998);
+  }
+  
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.reporting {
+  color: @df-middle-gray;
+}
+
+.countywide {
+  border-top: 1px solid @df-light-gray;
+  padding: 8px 0;
+}
+
+.unchosen {
+  text-align: center;
+  padding: 20px;
+}
+
+.updated {
+  font-size: 13px;
+  color: @df-middle-gray;
+  font-style: italic;
+  padding: 8px;
+  text-align: right;
+}
+
+h2 {
+  margin: 0;
+  
+  .countywide & {
+    font-size: 20px;
+  }
+}
+
+.candidates {
+  margin: 8px 0;
+  padding: 0;
+  list-style-type: none;
+  font-size: 17px;
+  
+  .name {
+    
+  }
+  
+  .result {
+    font-weight: bold;
+  }
+}
